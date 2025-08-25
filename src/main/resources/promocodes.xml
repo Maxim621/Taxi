@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<promocodes>
+    <promocode>
+        <promoId>1</promoId>
+        <code>WELCOME10</code>
+        <discount>10.00</discount>
+        <expiryDate>2025-08-25</expiryDate>
+        <isActive>true</isActive>
+    </promocode>
+    <promocode>
+        <promoId>2</promoId>
+        <code>SUMMER20</code>
+        <discount>20.00</discount>
+        <expiryDate>2025-08-25</expiryDate>
+        <isActive>true</isActive>
+    </promocode>
+</promocodes>

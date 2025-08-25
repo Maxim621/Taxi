@@ -1,16 +1,22 @@
 package com.solvd.taxi.service.impl;
 
+import com.solvd.taxi.connection.ConnectionPool;
 import com.solvd.taxi.dao.interfaces.PassengerDao;
 import com.solvd.taxi.dao.impl.PassengerDaoImpl;
 import com.solvd.taxi.model.Passenger;
 import com.solvd.taxi.service.interfaces.PassengerService;
 import com.solvd.taxi.util.Validator;
 import com.solvd.taxi.util.ExceptionHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class PassengerServiceImpl implements PassengerService {
+    private static final Logger logger = LogManager.getLogger(ConnectionPool.class);
+
     private final PassengerDao passengerDao;
 
     public PassengerServiceImpl() {
@@ -89,8 +95,13 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public Passenger findPassengerByPhone(String phone) {
         try {
-            return passengerDao.findByPhone(phone)
-                    .orElseThrow(() -> new RuntimeException("Passenger not found with phone: " + phone));
+            Optional<Passenger> passengerOpt = passengerDao.findByPhone(phone);
+            if (passengerOpt.isPresent()) {
+                return passengerOpt.get();
+            } else {
+                logger.warn("Passenger not found with phone: {}", phone);
+                return null; // instead of throwing exception
+            }
         } catch (SQLException e) {
             ExceptionHandler.handleSQLException(e, "find passenger by phone");
             throw new RuntimeException("Failed to find passenger: " + e.getMessage());

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<supporttickets>
+    <ticket>
+        <ticketId>1</ticketId>
+        <passengerId>1</passengerId>
+        <subject>Lost item</subject>
+        <message>I left my phone in the car</message>
+        <status>open</status>
+        <createdAt>2025-08-01T10:30:00</createdAt>
+    </ticket>
+    <ticket>
+        <ticketId>2</ticketId>
+        <passengerId>2</passengerId>
+        <subject>Payment issue</subject>
+        <message>Double charged for my ride</message>
+        <status>resolved</status>
+        <createdAt>2025-08-02T14:15:00</createdAt>
+        <resolvedAt>2025-08-02T16:45:00</resolvedAt>
+    </ticket>
+</supporttickets>

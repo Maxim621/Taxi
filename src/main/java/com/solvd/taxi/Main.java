@@ -4,16 +4,10 @@ import com.solvd.taxi.model.Passenger;
 import com.solvd.taxi.model.Driver;
 import com.solvd.taxi.model.Ride;
 import com.solvd.taxi.model.Payment;
-import com.solvd.taxi.service.interfaces.PassengerService;
-import com.solvd.taxi.service.interfaces.DriverService;
-import com.solvd.taxi.service.interfaces.RideService;
-import com.solvd.taxi.service.interfaces.PaymentService;
-import com.solvd.taxi.service.interfaces.AnalyticsService;
-import com.solvd.taxi.service.impl.PassengerServiceImpl;
-import com.solvd.taxi.service.impl.DriverServiceImpl;
-import com.solvd.taxi.service.impl.RideServiceImpl;
-import com.solvd.taxi.service.impl.PaymentServiceImpl;
-import com.solvd.taxi.service.impl.AnalyticsServiceImpl;
+import com.solvd.taxi.model.PromoCode;
+import com.solvd.taxi.model.SupportTicket;
+import com.solvd.taxi.service.impl.*;
+import com.solvd.taxi.service.interfaces.*;
 import com.solvd.taxi.connection.ConnectionPool;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +20,7 @@ import java.util.Map;
 public class Main {
     private static final Logger logger = LogManager.getLogger(Main.class);
 
+    private final XmlService xmlService;
     private final PassengerService passengerService;
     private final DriverService driverService;
     private final RideService rideService;
@@ -38,6 +33,7 @@ public class Main {
         this.rideService = new RideServiceImpl();
         this.paymentService = new PaymentServiceImpl();
         this.analyticsService = new AnalyticsServiceImpl();
+        this.xmlService = new XmlServiceImpl();
 
         logger.info("Services initialized successfully");
     }
@@ -76,6 +72,9 @@ public class Main {
             // 5. Demonstrate Analytics
             demonstrateAnalytics();
 
+            // 6. Demonstration of XML operations
+            demonstrateXmlOperations();
+
         } catch (Exception e) {
             logger.error("Demo execution failed: {}", e.getMessage(), e);
             throw e;
@@ -86,16 +85,27 @@ public class Main {
         logger.info("=== Demonstrating Passenger Operations ===");
 
         try {
-            // Search for existing passenger by phone (similar to driver search by license)
+            // Search for existing passenger by phone (use the updated phone number)
             Passenger foundPassenger = passengerService.findPassengerByPhone("+380501234567");
             if (foundPassenger != null) {
                 logger.info("Found passenger by phone: {}, Email: {}",
                         foundPassenger.getName(), foundPassenger.getEmail());
 
-                // Update passenger phone (similar to updating driver rating)
+                // Update passenger phone for demo
                 foundPassenger.setPhone("+380509998877");
                 boolean updated = passengerService.updatePassenger(foundPassenger);
                 logger.info("Passenger phone updated: {}", updated);
+            } else {
+                logger.info("No passenger found with phone: +380501234567, creating new one...");
+
+                // Create new passenger for demo
+                Passenger newPassenger = new Passenger();
+                newPassenger.setName("Demo User");
+                newPassenger.setEmail("demo@example.com");
+                newPassenger.setPhone("+380501234567");
+
+                Passenger created = passengerService.registerPassenger(newPassenger);
+                logger.info("Created new passenger: {}", created.getName());
             }
 
             // Search for passenger by email
@@ -194,9 +204,11 @@ public class Main {
         logger.info("=== Demonstrating Payment Operations ===");
 
         try {
+            int newRideId = 11;
+
             // Create a payment
             Payment newPayment = new Payment();
-            newPayment.setRideId(1); // Assume that the trip with ID=1 exists
+            newPayment.setRideId(newRideId); // Assume that the trip with ID=1 exists
             newPayment.setAmount(25.75);
             newPayment.setPaymentMethod("card");
 
@@ -250,6 +262,51 @@ public class Main {
             logger.error("Analytics operations failed: {}", e.getMessage(), e);
             throw e;
         }
+    }
+
+    private void demonstrateXmlOperations() {
+        logger.info("=== Demonstrating XML Operations with SAX Parser ===");
+
+        try {
+            // Parse promocodes from XML using SAX parser
+            List<PromoCode> promoCodes = xmlService.parsePromoCodes("src/main/resources/promocodes.xml");
+            logger.info("Parsed {} promocodes from XML using SAX parser", promoCodes.size());
+
+            // Parse support tickets from XML using SAX parser
+            List<SupportTicket> supportTickets = xmlService.parseSupportTickets("src/main/resources/supporttickets.xml");
+            logger.info("Parsed {} support tickets from XML using SAX parser", supportTickets.size());
+
+            // Demonstrate usage of parsed data
+            demonstratePromoCodeUsage(promoCodes);
+            demonstrateSupportTicketUsage(supportTickets);
+
+        } catch (Exception e) {
+            logger.error("XML operations failed: {}", e.getMessage(), e);
+        }
+    }
+
+    private void demonstratePromoCodeUsage(List<PromoCode> promoCodes) {
+        logger.info("=== Using PromoCodes parsed with SAX ===");
+        for (PromoCode promoCode : promoCodes) {
+            logger.info("PromoCode: {} - ${} discount, expires: {}, valid: {}",
+                    promoCode.getCode(), promoCode.getDiscount(),
+                    promoCode.getExpiryDate(), promoCode.isValid());
+        }
+    }
+
+    private void demonstrateSupportTicketUsage(List<SupportTicket> supportTickets) {
+        logger.info("=== Using SupportTickets parsed with SAX ===");
+        for (SupportTicket ticket : supportTickets) {
+            String status = ticket.isResolved() ? "RESOLVED" : "OPEN";
+            logger.info("Ticket #{}: {} - {} (Created: {})",
+                    ticket.getTicketId(), ticket.getSubject(), status, ticket.getCreatedAt());
+        }
+
+        // Show statistics
+        long openTickets = supportTickets.stream().filter(SupportTicket::isOpen).count();
+        long resolvedTickets = supportTickets.stream().filter(SupportTicket::isResolved).count();
+
+        logger.info("Support tickets statistics: {} open, {} resolved", openTickets, resolvedTickets);
     }
 
     private static void shutdown() {
