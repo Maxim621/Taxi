@@ -37,7 +37,7 @@ public class DriverDaoImpl extends BaseDao implements DriverDao {
 
             return driver;
         } finally {
-            closeResources(generatedKeys, statement);
+            closeResources(generatedKeys, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -60,7 +60,7 @@ public class DriverDaoImpl extends BaseDao implements DriverDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -84,7 +84,7 @@ public class DriverDaoImpl extends BaseDao implements DriverDao {
 
             return drivers;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -106,7 +106,7 @@ public class DriverDaoImpl extends BaseDao implements DriverDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -124,7 +124,7 @@ public class DriverDaoImpl extends BaseDao implements DriverDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -147,7 +147,7 @@ public class DriverDaoImpl extends BaseDao implements DriverDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -172,7 +172,7 @@ public class DriverDaoImpl extends BaseDao implements DriverDao {
 
             return drivers;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -197,7 +197,7 @@ public class DriverDaoImpl extends BaseDao implements DriverDao {
 
             return drivers;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -217,7 +217,7 @@ public class DriverDaoImpl extends BaseDao implements DriverDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -239,7 +239,7 @@ public class DriverDaoImpl extends BaseDao implements DriverDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }

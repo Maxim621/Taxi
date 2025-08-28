@@ -39,7 +39,7 @@ public class PassengerDaoImpl extends BaseDao implements PassengerDao {
 
             return passenger;
         } finally {
-            closeResources(generatedKeys, statement);
+            closeResources(generatedKeys, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -62,7 +62,7 @@ public class PassengerDaoImpl extends BaseDao implements PassengerDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -86,7 +86,7 @@ public class PassengerDaoImpl extends BaseDao implements PassengerDao {
 
             return passengers;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -108,7 +108,7 @@ public class PassengerDaoImpl extends BaseDao implements PassengerDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -126,7 +126,7 @@ public class PassengerDaoImpl extends BaseDao implements PassengerDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -149,7 +149,7 @@ public class PassengerDaoImpl extends BaseDao implements PassengerDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -172,7 +172,7 @@ public class PassengerDaoImpl extends BaseDao implements PassengerDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -197,7 +197,7 @@ public class PassengerDaoImpl extends BaseDao implements PassengerDao {
 
             return passengers;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -219,7 +219,7 @@ public class PassengerDaoImpl extends BaseDao implements PassengerDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }

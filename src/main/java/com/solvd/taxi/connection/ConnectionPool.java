@@ -127,7 +127,7 @@ public class ConnectionPool {
             }
 
             // Check if the connection is still valid
-            if (connection.isClosed() || !connection.isValid(2)) {
+            if (connection.isClosed() || !isConnectionValid(connection)) {
                 logger.warn("Connection from pool was invalid, creating new one");
                 connection = createConnection();
             }
@@ -139,6 +139,15 @@ public class ConnectionPool {
             logger.error("Failed to get valid connection from pool: {}", e.getMessage());
             ExceptionHandler.handleSQLException(e, "get connection from pool");
             throw new RuntimeException("Failed to get valid connection from pool", e);
+        }
+    }
+
+    private boolean isConnectionValid(Connection connection) {
+        try {
+            return connection != null && connection.isValid(2);
+        } catch (SQLException e) {
+            logger.warn("Connection validation failed: {}", e.getMessage());
+            return false;
         }
     }
 
@@ -186,12 +195,12 @@ public class ConnectionPool {
         logger.info("Closing all connections in pool...");
 
         int closedCount = 0;
-        for (Connection connection : connections) {
+        Connection connection;
+        while ((connection = connections.poll()) != null) {
             if (closeConnectionSilently(connection)) {
                 closedCount++;
             }
         }
-        connections.clear();
 
         logger.info("Closed {} connections. Pool is now empty.", closedCount);
     }
@@ -215,9 +224,12 @@ public class ConnectionPool {
 
     // Checks the connection pool status
     public boolean isPoolHealthy() {
-        boolean isHealthy = connections.size() > 0;
-        logger.debug("Pool health check: {}", isHealthy ? "healthy" : "unhealthy");
-        return isHealthy;
+        try (Connection testConn = createConnection()) {
+            return testConn.isValid(2);
+        } catch (SQLException e) {
+            logger.warn("Pool health check failed: {}", e.getMessage());
+            return false;
+        }
     }
 
     // Reloads the connection pool (useful when changing the configuration)

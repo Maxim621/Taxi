@@ -272,6 +272,10 @@ public class Main {
             List<PromoCode> promoCodes = xmlService.parsePromoCodes("src/main/resources/promocodes.xml");
             logger.info("Parsed {} promocodes from XML using SAX parser", promoCodes.size());
 
+            // JAXB parser
+            List<PromoCode> promoCodesJaxb = xmlService.parsePromoCodesWithJaxb("src/main/resources/promocodes.xml");
+            logger.info("Parsed {} promocodes from XML using JAXB with XSD validation", promoCodesJaxb.size());
+
             // Parse support tickets from XML using SAX parser
             List<SupportTicket> supportTickets = xmlService.parseSupportTickets("src/main/resources/supporttickets.xml");
             logger.info("Parsed {} support tickets from XML using SAX parser", supportTickets.size());
@@ -308,6 +312,7 @@ public class Main {
 
         logger.info("Support tickets statistics: {} open, {} resolved", openTickets, resolvedTickets);
     }
+
 
     private static void shutdown() {
         logger.info("Shutting down application...");

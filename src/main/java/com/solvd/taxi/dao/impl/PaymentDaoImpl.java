@@ -37,7 +37,7 @@ public class PaymentDaoImpl extends BaseDao implements PaymentDao {
 
             return payment;
         } finally {
-            closeResources(generatedKeys, statement);
+            closeResources(generatedKeys, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -60,7 +60,7 @@ public class PaymentDaoImpl extends BaseDao implements PaymentDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -84,7 +84,7 @@ public class PaymentDaoImpl extends BaseDao implements PaymentDao {
 
             return payments;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -106,7 +106,7 @@ public class PaymentDaoImpl extends BaseDao implements PaymentDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -124,7 +124,7 @@ public class PaymentDaoImpl extends BaseDao implements PaymentDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -147,7 +147,7 @@ public class PaymentDaoImpl extends BaseDao implements PaymentDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -172,7 +172,7 @@ public class PaymentDaoImpl extends BaseDao implements PaymentDao {
 
             return payments;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -198,7 +198,7 @@ public class PaymentDaoImpl extends BaseDao implements PaymentDao {
 
             return payments;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -226,7 +226,7 @@ public class PaymentDaoImpl extends BaseDao implements PaymentDao {
 
             return payments;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -248,7 +248,7 @@ public class PaymentDaoImpl extends BaseDao implements PaymentDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -274,7 +274,7 @@ public class PaymentDaoImpl extends BaseDao implements PaymentDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -296,7 +296,7 @@ public class PaymentDaoImpl extends BaseDao implements PaymentDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }

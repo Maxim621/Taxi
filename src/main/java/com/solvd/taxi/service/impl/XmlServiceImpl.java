@@ -5,6 +5,7 @@ import com.solvd.taxi.model.PromoCode;
 import com.solvd.taxi.model.SupportTicket;
 import com.solvd.taxi.util.PromoCodeSaxHandler;
 import com.solvd.taxi.util.SupportTicketSaxHandler;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -16,6 +17,8 @@ import java.util.List;
  * Handles parsing of PromoCode and SupportTicket XML files
  */
 public class XmlServiceImpl implements XmlService {
+
+    private final JaxbService jaxbService = new JaxbService();
 
     // Parses promocodes from XML file using SAX parser
     @Override
@@ -31,6 +34,11 @@ public class XmlServiceImpl implements XmlService {
         } catch (Exception e) {
             throw new RuntimeException("Error parsing promocodes XML: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public List<PromoCode> parsePromoCodesWithJaxb(String xmlFilePath) {
+        return jaxbService.parsePromoCodesWithValidation(xmlFilePath);
     }
 
     // Parses support tickets from XML file using SAX parser

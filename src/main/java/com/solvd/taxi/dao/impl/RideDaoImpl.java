@@ -47,7 +47,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
 
             return ride;
         } finally {
-            closeResources(generatedKeys, statement);
+            closeResources(generatedKeys, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -70,7 +70,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -94,7 +94,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
 
             return rides;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -126,7 +126,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -144,7 +144,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -169,7 +169,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
 
             return rides;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -194,7 +194,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
 
             return rides;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -219,7 +219,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
 
             return rides;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -245,7 +245,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
 
             return rides;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -265,7 +265,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -285,7 +285,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -309,7 +309,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
 
             return rides;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -332,8 +332,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
-            releaseConnection(connection);
+            closeResources(resultSet, statement, connection);
         }
     }
 
@@ -354,7 +353,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -377,7 +376,7 @@ public class RideDaoImpl extends BaseDao implements RideDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }

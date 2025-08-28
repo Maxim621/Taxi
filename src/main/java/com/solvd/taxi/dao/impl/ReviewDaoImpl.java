@@ -37,7 +37,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
 
             return review;
         } finally {
-            closeResources(generatedKeys, statement);
+            closeResources(generatedKeys, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -60,7 +60,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -84,7 +84,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
 
             return reviews;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -106,7 +106,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -124,7 +124,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -149,7 +149,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
 
             return reviews;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -174,7 +174,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
 
             return reviews;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -201,7 +201,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
 
             return reviews;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -228,7 +228,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
 
             return reviews;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -253,7 +253,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -278,7 +278,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -303,7 +303,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -328,7 +328,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -350,7 +350,7 @@ public class ReviewDaoImpl extends BaseDao implements ReviewDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }

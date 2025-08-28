@@ -1,12 +1,30 @@
 package com.solvd.taxi.model;
 
+import com.solvd.taxi.util.LocalDateAdapter;
+
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 
+@XmlRootElement(name = "promocode")
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = {"promoId", "code", "discount", "expiryDate", "isActive"})
 public class PromoCode {
+
+    @XmlElement(name = "promoId", required = true)
     private int promoId;
+
+    @XmlElement(required = true)
     private String code;
+
+    @XmlElement(required = true)
     private double discount;
+
+    @XmlElement(required = true)
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate expiryDate;
+
+    @XmlElement(defaultValue = "true")
     private boolean isActive;
 
     public PromoCode() {}

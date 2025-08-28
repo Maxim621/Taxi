@@ -37,7 +37,7 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
 
             return pricing;
         } finally {
-            closeResources(generatedKeys, statement);
+            closeResources(generatedKeys, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -60,7 +60,7 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -84,7 +84,7 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
 
             return pricings;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -106,7 +106,7 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -124,7 +124,7 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -132,7 +132,6 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
     @Override
     public Optional<Pricing> findActivePricing() throws SQLException {
         // This would require additional field 'is_active' in the database
-        // For now, return the first pricing
         String sql = "SELECT * FROM Pricing LIMIT 1";
         Connection connection = null;
         Statement statement = null;
@@ -148,7 +147,7 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -174,7 +173,7 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
 
             return pricings;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -182,7 +181,6 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
     @Override
     public boolean deactivateAllPricings() throws SQLException {
         // This would require additional field 'is_active' in the database
-        // For now, this is a placeholder implementation
         String sql = "UPDATE Pricing SET is_active = false";
         Connection connection = null;
         Statement statement = null;
@@ -192,7 +190,7 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
             statement = connection.createStatement();
             return statement.executeUpdate(sql) > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -200,7 +198,6 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
     @Override
     public boolean activatePricing(int pricingId) throws SQLException {
         // This would require additional field 'is_active' in the database
-        // For now, this is a placeholder implementation
         String sql = "UPDATE Pricing SET is_active = true WHERE price_id = ?";
         Connection connection = null;
         PreparedStatement statement = null;
@@ -211,7 +208,7 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
             statement.setInt(1, pricingId);
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -219,7 +216,6 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
     @Override
     public Optional<Pricing> getCurrentActivePricing() throws SQLException {
         // This would require additional field 'is_active' in the database
-        // For now, return the first pricing
         String sql = "SELECT * FROM Pricing LIMIT 1";
         Connection connection = null;
         Statement statement = null;
@@ -235,7 +231,7 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -257,7 +253,7 @@ public class PricingDaoImpl extends BaseDao implements PricingDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }

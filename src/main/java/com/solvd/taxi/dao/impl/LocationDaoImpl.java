@@ -37,7 +37,7 @@ public class LocationDaoImpl extends BaseDao implements LocationDao {
 
             return location;
         } finally {
-            closeResources(generatedKeys, statement);
+            closeResources(generatedKeys, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -60,7 +60,7 @@ public class LocationDaoImpl extends BaseDao implements LocationDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -84,7 +84,7 @@ public class LocationDaoImpl extends BaseDao implements LocationDao {
 
             return locations;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -106,7 +106,7 @@ public class LocationDaoImpl extends BaseDao implements LocationDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -124,7 +124,7 @@ public class LocationDaoImpl extends BaseDao implements LocationDao {
 
             return statement.executeUpdate() > 0;
         } finally {
-            closeResources(statement);
+            closeResources(statement, connection);
             releaseConnection(connection);
         }
     }
@@ -147,7 +147,7 @@ public class LocationDaoImpl extends BaseDao implements LocationDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -175,7 +175,7 @@ public class LocationDaoImpl extends BaseDao implements LocationDao {
 
             return locations;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -200,7 +200,7 @@ public class LocationDaoImpl extends BaseDao implements LocationDao {
 
             return locations;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -224,7 +224,7 @@ public class LocationDaoImpl extends BaseDao implements LocationDao {
             }
             return Optional.empty();
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }
@@ -246,7 +246,7 @@ public class LocationDaoImpl extends BaseDao implements LocationDao {
             }
             return 0;
         } finally {
-            closeResources(resultSet, statement);
+            closeResources(resultSet, statement, connection);
             releaseConnection(connection);
         }
     }

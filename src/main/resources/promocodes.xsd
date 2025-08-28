@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+    <xs:element name="promocodes" type="PromocodesType"/>
+
+    <xs:complexType name="PromocodesType">
+        <xs:sequence>
+            <xs:element name="promocode" type="PromocodeType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PromocodeType">
+        <xs:sequence>
+            <xs:element name="promoId" type="xs:int"/>
+            <xs:element name="code" type="xs:string"/>
+            <xs:element name="discount" type="xs:decimal"/>
+            <xs:element name="expiryDate" type="xs:date"/>
+            <xs:element name="isActive" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

@@ -27,20 +27,24 @@ public abstract class BaseDao {
         }
     }
 
-    protected void closeResources(ResultSet resultSet, Statement statement) {
+    protected void closeResources(ResultSet resultSet, Statement statement, Connection connection) {
         try {
             if (resultSet != null) resultSet.close();
             if (statement != null) statement.close();
         } catch (SQLException e) {
             ExceptionHandler.handleSQLException(e, "closing resources");
+        } finally {
+            releaseConnection(connection);
         }
     }
 
-    protected void closeResources(Statement statement) {
+    protected void closeResources(Statement statement, Connection connection) {
         try {
             if (statement != null) statement.close();
         } catch (SQLException e) {
             ExceptionHandler.handleSQLException(e, "closing statement");
+        } finally {
+            releaseConnection(connection);
         }
     }
 
