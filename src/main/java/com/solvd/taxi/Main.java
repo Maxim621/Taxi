@@ -53,272 +53,352 @@ public class Main {
         }
     }
 
-    private void runDemo() throws SQLException {
-        logger.debug("Running demonstration of taxi services");
+    private void runDemo() {
+        logger.debug("Running taxi service demonstration");
 
         try {
-            // 1. Demonstration of working with passengers
-            demonstratePassengerOperations();
+            // Scenario simulation
+            simulateRealWorldScenario();
 
-            // 2. Demonstration of work with drivers
-            demonstrateDriverOperations();
-
-            // 3. Demonstrate Ride Operations
-            demonstrateRideOperations();
-
-            // 4. Demonstrate Payment Operations
-            demonstratePaymentOperations();
-
-            // 5. Demonstrate Analytics
-            demonstrateAnalytics();
-
-            // 6. Demonstration of XML operations
-            demonstrateXmlOperations();
+            // Additional demonstrations of all services
+            demonstrateAllServices();
 
         } catch (Exception e) {
             logger.error("Demo execution failed: {}", e.getMessage(), e);
-            throw e;
+        }
+    }
+
+    private void simulateRealWorldScenario() throws SQLException {
+        logger.info("=== Simulating Taxi Service Scenario ===");
+
+        // Customer registration and ride booking
+        Passenger customer = registerNewCustomer();
+
+        // Driver assignment and ride execution
+        Driver assignedDriver = findAvailableDriver();
+
+        // Ride creation and processing
+        Ride customerRide = createAndProcessRide(customer, assignedDriver);
+
+        // Payment processing
+        processRidePayment(customerRide);
+
+        // Post-ride analytics
+        generatePostRideAnalytics();
+    }
+
+    private Passenger registerNewCustomer() throws SQLException {
+        logger.info("--- Customer Registration ---");
+
+        // Check if customer already exists
+        Passenger existingCustomer = passengerService.findPassengerByPhone("+380501234567");
+        if (existingCustomer != null) {
+            logger.info("Existing customer found: {}", existingCustomer.getName());
+            return existingCustomer;
+        }
+
+        // Register new customer
+        Passenger newCustomer = new Passenger();
+        newCustomer.setName("John Smith");
+        newCustomer.setEmail("john.smith@email.com");
+        newCustomer.setPhone("+380501234567");
+
+        Passenger registeredCustomer = passengerService.registerPassenger(newCustomer);
+        logger.info("New customer registered: {}", registeredCustomer.getName());
+
+        return registeredCustomer;
+    }
+
+    private Driver findAvailableDriver() throws SQLException {
+        logger.info("--- Finding Available Driver ---");
+
+        // Get all available drivers
+        List<Driver> availableDrivers = driverService.getAllDrivers();
+        if (availableDrivers.isEmpty()) {
+            throw new RuntimeException("No drivers available");
+        }
+
+        // Select driver with best rating
+        Driver bestDriver = availableDrivers.stream()
+                .filter(driver -> driver.getRating() >= 4.0)
+                .findFirst()
+                .orElse(availableDrivers.get(0));
+
+        logger.info("Driver assigned: {} (Rating: {})", bestDriver.getName(), bestDriver.getRating());
+        return bestDriver;
+    }
+
+    private Ride createAndProcessRide(Passenger passenger, Driver driver) throws SQLException {
+        logger.info("--- Ride Creation and Processing ---");
+
+        // Create new ride
+        Ride ride = new Ride();
+        ride.setPassengerId(passenger.getPassengerId());
+        ride.setDriverId(driver.getDriverId());
+        ride.setStartLocationId(1);  // Downtown
+        ride.setEndLocationId(3);    // Airport
+        ride.setPriceId(1);
+        ride.setDistance(25.0);      // 25 km to airport
+
+        Ride createdRide = rideService.createRide(ride);
+        logger.info("Ride created: ID {}", createdRide.getRideId());
+
+        // Simulate ride process
+        rideService.startRide(createdRide.getRideId());
+        logger.info("Ride started - driver is on the way");
+
+        // Simulate ride completion
+        rideService.completeRide(createdRide.getRideId());
+        logger.info("Ride completed successfully");
+
+        // Calculate final price
+        double finalPrice = rideService.calculateRidePrice(createdRide.getRideId());
+        logger.info("Final ride price: ${}", finalPrice);
+
+        return createdRide;
+    }
+
+    private void processRidePayment(Ride ride) throws SQLException {
+        logger.info("--- Payment Processing ---");
+
+        // Create payment for the ride
+        Payment payment = new Payment();
+        payment.setRideId(ride.getRideId()); // Use the actual ride ID
+        payment.setAmount(rideService.calculateRidePrice(ride.getRideId()));
+        payment.setPaymentMethod("card");
+
+        Payment processedPayment = paymentService.processPayment(payment);
+        logger.info("Payment processed: ${} via {}",
+                processedPayment.getAmount(),
+                processedPayment.getPaymentMethod());
+
+        // Verify payment was recorded
+        Payment verifiedPayment = paymentService.getPaymentByRideId(ride.getRideId());
+        if (verifiedPayment != null) {
+            logger.info("Payment verification: SUCCESS - Payment ID {}", verifiedPayment.getPaymentId());
+        } else {
+            logger.warn("Payment verification: FAILED - No payment found for ride ID {}", ride.getRideId());
+        }
+    }
+
+    private void generatePostRideAnalytics() throws SQLException {
+        logger.info("--- Post-Ride Analytics ---");
+
+        // Get overall ride statistics
+        Map<String, Integer> rideStats = analyticsService.getRidesStatistics();
+        logger.info("Total rides today: {}", rideStats.getOrDefault("today", 0));
+
+        // Revenue analysis
+        Map<String, Double> revenueStats = analyticsService.getRevenueStatistics();
+        logger.info("Today's revenue: ${}", revenueStats.getOrDefault("today", 0.0));
+
+        // Driver performance
+        Map<String, Integer> driverStats = analyticsService.getDriverPerformanceStats();
+        logger.info("Active drivers: {}", driverStats.size());
+    }
+
+    private void demonstrateAllServices() {
+        logger.info("=== Comprehensive Service Demonstration ===");
+
+        try {
+            demonstratePassengerOperations();
+            demonstrateDriverOperations();
+            demonstrateRideOperations();
+            demonstratePaymentOperations();
+            demonstrateAnalytics();
+            demonstrateXmlOperations();
+        } catch (Exception e) {
+            logger.error("Service demonstration failed: {}", e.getMessage(), e);
         }
     }
 
     private void demonstratePassengerOperations() throws SQLException {
-        logger.info("=== Demonstrating Passenger Operations ===");
+        logger.info("--- Passenger Service Methods ---");
 
-        try {
-            // Search for existing passenger by phone (use the updated phone number)
-            Passenger foundPassenger = passengerService.findPassengerByPhone("+380501234567");
-            if (foundPassenger != null) {
-                logger.info("Found passenger by phone: {}, Email: {}",
-                        foundPassenger.getName(), foundPassenger.getEmail());
-
-                // Update passenger phone for demo
-                foundPassenger.setPhone("+380509998877");
-                boolean updated = passengerService.updatePassenger(foundPassenger);
-                logger.info("Passenger phone updated: {}", updated);
-            } else {
-                logger.info("No passenger found with phone: +380501234567, creating new one...");
-
-                // Create new passenger for demo
-                Passenger newPassenger = new Passenger();
-                newPassenger.setName("Demo User");
-                newPassenger.setEmail("demo@example.com");
-                newPassenger.setPhone("+380501234567");
-
-                Passenger created = passengerService.registerPassenger(newPassenger);
-                logger.info("Created new passenger: {}", created.getName());
-            }
-
-            // Search for passenger by email
-            Passenger foundByEmail = passengerService.findPassengerByEmail("ivan@example.com");
-            if (foundByEmail != null) {
-                logger.info("Found passenger by email: {}, Phone: {}",
-                        foundByEmail.getName(), foundByEmail.getPhone());
-            }
-
-            // Search for passengers by name pattern
-            List<Passenger> foundByName = passengerService.searchPassengersByName("Ivan");
-            logger.info("Found {} passengers with name containing 'Ivan'", foundByName.size());
-            for (Passenger passenger : foundByName) {
-                logger.info(" - {} (Phone: {})", passenger.getName(), passenger.getPhone());
-            }
-
-            // Get all passengers
-            List<Passenger> allPassengers = passengerService.getAllPassengers();
-            logger.info("Total passengers in database: {}", allPassengers.size());
-
-            // Get passenger count
-            int passengerCount = passengerService.getTotalPassengersCount();
-            logger.info("Total passengers count: {}", passengerCount);
-
-        } catch (Exception e) {
-            logger.error("Passenger operations failed: {}", e.getMessage(), e);
-            throw e;
+        // Demonstrates finding passenger by phone number
+        Passenger passenger = passengerService.findPassengerByPhone("+380501234567");
+        if (passenger != null) {
+            logger.info("Found passenger: {} - {}", passenger.getName(), passenger.getEmail());
         }
+
+        // Demonstrates finding passenger by email
+        Passenger byEmail = passengerService.findPassengerByEmail("ivan@example.com");
+        if (byEmail != null) {
+            logger.info("Found passenger by email: {}", byEmail.getName());
+        }
+
+        // Demonstrates searching passengers by name pattern
+        List<Passenger> searchResults = passengerService.searchPassengersByName("Ivan");
+        logger.info("Found {} passengers matching 'Ivan'", searchResults.size());
+
+        // Demonstrates getting all passengers
+        List<Passenger> allPassengers = passengerService.getAllPassengers();
+        logger.info("Total passengers in system: {}", allPassengers.size());
+
+        // Demonstrates passenger count
+        int totalCount = passengerService.getTotalPassengersCount();
+        logger.info("Total passenger count: {}", totalCount);
     }
 
     private void demonstrateDriverOperations() throws SQLException {
-        logger.info("=== Demonstrating Driver Operations ===");
+        logger.info("--- Driver Service Methods ---");
 
-        try {
-            // Find an existing driver by license
-            Driver foundDriver = driverService.findDriverByLicense("UA123456");
-            if (foundDriver != null) {
-                logger.info("Found driver by license: {}, Rating: {}",
-                        foundDriver.getName(), foundDriver.getRating());
+        // Demonstrates finding driver by license number
+        Driver driver = driverService.findDriverByLicense("UA123456");
+        if (driver != null) {
+            logger.info("Found driver: {} - Rating: {}", driver.getName(), driver.getRating());
 
-                // Update driver rating
-                boolean ratingUpdated = driverService.updateDriverRating(foundDriver.getDriverId(), 4.9);
-                logger.info("Driver rating updated: {}", ratingUpdated);
-            }
-
-            // Get all drivers
-            List<Driver> allDrivers = driverService.getAllDrivers();
-            logger.info("Total drivers: {}", allDrivers.size());
-
-        } catch (Exception e) {
-            logger.error("Driver operations failed: {}", e.getMessage(), e);
-            throw e;
+            // Demonstrates updating driver rating
+            boolean updated = driverService.updateDriverRating(driver.getDriverId(), 4.8);
+            logger.info("Driver rating updated: {}", updated);
         }
+
+        // Demonstrates getting all drivers
+        List<Driver> allDrivers = driverService.getAllDrivers();
+        logger.info("Total drivers available: {}", allDrivers.size());
     }
 
     private void demonstrateRideOperations() throws SQLException {
-        logger.info("=== Demonstrating Ride Operations ===");
+        logger.info("--- Ride Service Methods ---");
 
-        try {
-            // Create a new ride
-            Ride newRide = new Ride();
-            newRide.setPassengerId(1); // Assume that a passenger with ID=1 exists
-            newRide.setDriverId(1);    // Assume that a driver with ID=1 exists
-            newRide.setStartLocationId(1);
-            newRide.setEndLocationId(2);
-            newRide.setPriceId(1);
-            newRide.setDistance(12.5);
+        // Demonstrates creating a new ride
+        Ride ride = new Ride();
+        ride.setPassengerId(1);
+        ride.setDriverId(1);
+        ride.setStartLocationId(2);
+        ride.setEndLocationId(4);
+        ride.setPriceId(1);
+        ride.setDistance(15.0);
 
-            Ride createdRide = rideService.createRide(newRide);
-            logger.info("Created ride: ID={}, Distance={}km",
-                    createdRide.getRideId(), createdRide.getDistance());
+        Ride createdRide = rideService.createRide(ride);
+        logger.info("Created ride with ID: {}", createdRide.getRideId());
 
-            // Start a ride
-            boolean rideStarted = rideService.startRide(createdRide.getRideId());
-            logger.info("Ride started: {}", rideStarted);
+        // Demonstrates starting a ride
+        boolean started = rideService.startRide(createdRide.getRideId());
+        logger.info("Ride started: {}", started);
 
-            // Complete a ride
-            boolean rideCompleted = rideService.completeRide(createdRide.getRideId());
-            logger.info("Ride completed: {}", rideCompleted);
+        // Demonstrates completing a ride
+        boolean completed = rideService.completeRide(createdRide.getRideId());
+        logger.info("Ride completed: {}", completed);
 
-            // Get a passenger's rides
-            List<Ride> passengerRides = rideService.getRidesByPassenger(1);
-            logger.info("Passenger has {} rides", passengerRides.size());
+        // Demonstrates getting passenger ride history
+        List<Ride> passengerRides = rideService.getRidesByPassenger(1);
+        logger.info("Passenger has {} previous rides", passengerRides.size());
 
-            // Calculate the price of a ride
-            double price = rideService.calculateRidePrice(createdRide.getRideId());
-            logger.info("Ride price: ${}", price);
-
-        } catch (Exception e) {
-            logger.error("Ride operations failed: {}", e.getMessage(), e);
-            throw e;
-        }
+        // Demonstrates price calculation
+        double price = rideService.calculateRidePrice(createdRide.getRideId());
+        logger.info("Calculated ride price: ${}", price);
     }
 
     private void demonstratePaymentOperations() throws SQLException {
-        logger.info("=== Demonstrating Payment Operations ===");
+        logger.info("--- Payment Service Methods ---");
 
-        try {
-            int newRideId = 11;
+        // First create a new ride for payment demonstration
+        Ride demoRide = new Ride();
+        demoRide.setPassengerId(1);
+        demoRide.setDriverId(1);
+        demoRide.setStartLocationId(3);
+        demoRide.setEndLocationId(5);
+        demoRide.setPriceId(1);
+        demoRide.setDistance(10.0);
 
-            // Create a payment
-            Payment newPayment = new Payment();
-            newPayment.setRideId(newRideId); // Assume that the trip with ID=1 exists
-            newPayment.setAmount(25.75);
-            newPayment.setPaymentMethod("card");
+        Ride createdDemoRide = rideService.createRide(demoRide);
+        logger.info("Created demo ride with ID: {}", createdDemoRide.getRideId());
 
-            Payment createdPayment = paymentService.processPayment(newPayment);
-            logger.info("Processed payment: ID={}, Amount=${}",
-                    createdPayment.getPaymentId(), createdPayment.getAmount());
+        // Demonstrates payment processing for the new ride
+        Payment payment = new Payment();
+        payment.setRideId(createdDemoRide.getRideId()); // Use the newly created ride ID
+        payment.setAmount(18.50);
+        payment.setPaymentMethod("cash");
 
-            // Get payment for a ride
-            Payment ridePayment = paymentService.getPaymentByRideId(1);
+        Payment processedPayment = paymentService.processPayment(payment);
+        logger.info("Payment processed: ID {}", processedPayment.getPaymentId());
+
+        // Demonstrates retrieving payment by ride ID
+        Payment ridePayment = paymentService.getPaymentByRideId(createdDemoRide.getRideId());
+        if (ridePayment != null) {
             logger.info("Payment for ride: ${}", ridePayment.getAmount());
-
-            // Get total revenue
-            double totalRevenue = paymentService.getTotalRevenue();
-            logger.info("Total revenue: ${}", totalRevenue);
-
-            // Get all payments
-            List<Payment> allPayments = paymentService.getAllPayments();
-            logger.info("Total payments: {}", allPayments.size());
-
-        } catch (Exception e) {
-            logger.error("Payment operations failed: {}", e.getMessage(), e);
-            throw e;
         }
+
+        // Demonstrates total revenue calculation
+        double revenue = paymentService.getTotalRevenue();
+        logger.info("Total system revenue: ${}", revenue);
+
+        // Demonstrates getting all payments
+        List<Payment> allPayments = paymentService.getAllPayments();
+        logger.info("Total payments processed: {}", allPayments.size());
     }
 
     private void demonstrateAnalytics() throws SQLException {
-        logger.info("=== Demonstrating Analytics Operations ===");
+        logger.info("--- Analytics Service Methods ---");
 
-        try {
-            // Ride Statistics
-            Map<String, Integer> rideStats = analyticsService.getRidesStatistics();
-            logger.info("Ride statistics: {}", rideStats);
+        // Demonstrates ride statistics
+        Map<String, Integer> rideStats = analyticsService.getRidesStatistics();
+        logger.info("Ride statistics: {}", rideStats);
 
-            // Revenue Statistics
-            Map<String, Double> revenueStats = analyticsService.getRevenueStatistics();
-            logger.info("Revenue statistics: {}", revenueStats);
+        // Demonstrates revenue statistics
+        Map<String, Double> revenueStats = analyticsService.getRevenueStatistics();
+        logger.info("Revenue statistics: {}", revenueStats);
 
-            // Driver Statistics
-            Map<String, Integer> driverStats = analyticsService.getDriverPerformanceStats();
-            logger.info("Driver statistics: {}", driverStats);
+        // Demonstrates driver performance stats
+        Map<String, Integer> driverStats = analyticsService.getDriverPerformanceStats();
+        logger.info("Driver performance: {}", driverStats);
 
-            // Popular Locations
-            Map<String, Integer> popularLocations = analyticsService.getPopularLocations();
-            logger.info("Popular locations: {}", popularLocations);
+        // Demonstrates popular locations
+        Map<String, Integer> locations = analyticsService.getPopularLocations();
+        logger.info("Popular locations: {}", locations);
 
-            // Active Users
-            int activeUsers = analyticsService.getActiveUsersCount();
-            logger.info("Active users: {}", activeUsers);
-
-        } catch (Exception e) {
-            logger.error("Analytics operations failed: {}", e.getMessage(), e);
-            throw e;
-        }
+        // Demonstrates active users count
+        int activeUsers = analyticsService.getActiveUsersCount();
+        logger.info("Active users: {}", activeUsers);
     }
 
     private void demonstrateXmlOperations() {
-        logger.info("=== Demonstrating XML Operations with SAX Parser ===");
+        logger.info("--- XML Service Methods ---");
 
         try {
-            // Parse promocodes from XML using SAX parser
+            // Demonstrates SAX parser for promocodes
             List<PromoCode> promoCodes = xmlService.parsePromoCodes("src/main/resources/promocodes.xml");
-            logger.info("Parsed {} promocodes from XML using SAX parser", promoCodes.size());
+            logger.info("Parsed {} promocodes using SAX", promoCodes.size());
 
-            // JAXB parser
-            List<PromoCode> promoCodesJaxb = xmlService.parsePromoCodesWithJaxb("src/main/resources/promocodes.xml");
-            logger.info("Parsed {} promocodes from XML using JAXB with XSD validation", promoCodesJaxb.size());
+            // Demonstrates JAXB parser with XSD validation
+            List<PromoCode> jaxbPromoCodes = xmlService.parsePromoCodesWithJaxb("src/main/resources/promocodes.xml");
+            logger.info("Parsed {} promocodes using JAXB", jaxbPromoCodes.size());
 
-            // Parse support tickets from XML using SAX parser
+            // Demonstrates SAX parser for support tickets
             List<SupportTicket> supportTickets = xmlService.parseSupportTickets("src/main/resources/supporttickets.xml");
-            logger.info("Parsed {} support tickets from XML using SAX parser", supportTickets.size());
+            logger.info("Parsed {} support tickets", supportTickets.size());
 
-            // Demonstrate usage of parsed data
-            demonstratePromoCodeUsage(promoCodes);
-            demonstrateSupportTicketUsage(supportTickets);
+            // Show usage examples
+            demonstrateParsedDataUsage(promoCodes, supportTickets);
 
         } catch (Exception e) {
             logger.error("XML operations failed: {}", e.getMessage(), e);
         }
     }
 
-    private void demonstratePromoCodeUsage(List<PromoCode> promoCodes) {
-        logger.info("=== Using PromoCodes parsed with SAX ===");
-        for (PromoCode promoCode : promoCodes) {
-            logger.info("PromoCode: {} - ${} discount, expires: {}, valid: {}",
-                    promoCode.getCode(), promoCode.getDiscount(),
-                    promoCode.getExpiryDate(), promoCode.isValid());
-        }
-    }
+    private void demonstrateParsedDataUsage(List<PromoCode> promoCodes, List<SupportTicket> supportTickets) {
+        logger.info("--- Using Parsed XML Data ---");
 
-    private void demonstrateSupportTicketUsage(List<SupportTicket> supportTickets) {
-        logger.info("=== Using SupportTickets parsed with SAX ===");
-        for (SupportTicket ticket : supportTickets) {
-            String status = ticket.isResolved() ? "RESOLVED" : "OPEN";
-            logger.info("Ticket #{}: {} - {} (Created: {})",
-                    ticket.getTicketId(), ticket.getSubject(), status, ticket.getCreatedAt());
+        // Promo code usage example
+        if (!promoCodes.isEmpty()) {
+            PromoCode firstPromo = promoCodes.get(0);
+            logger.info("First promo code: {} - ${} discount (Valid: {})",
+                    firstPromo.getCode(), firstPromo.getDiscount(), firstPromo.isValid());
         }
 
-        // Show statistics
+        // Support ticket statistics
         long openTickets = supportTickets.stream().filter(SupportTicket::isOpen).count();
         long resolvedTickets = supportTickets.stream().filter(SupportTicket::isResolved).count();
 
-        logger.info("Support tickets statistics: {} open, {} resolved", openTickets, resolvedTickets);
+        logger.info("Support tickets: {} open, {} resolved", openTickets, resolvedTickets);
     }
-
 
     private static void shutdown() {
         logger.info("Shutting down application...");
 
         try {
-            // Close the ConnectionPool
+            // Clean up connection pool
             ConnectionPool.shutdown();
             logger.info("Connection pool shut down successfully");
 
