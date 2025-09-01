@@ -1,11 +1,6 @@
 package com.solvd.taxi;
 
-import com.solvd.taxi.model.Passenger;
-import com.solvd.taxi.model.Driver;
-import com.solvd.taxi.model.Ride;
-import com.solvd.taxi.model.Payment;
-import com.solvd.taxi.model.PromoCode;
-import com.solvd.taxi.model.SupportTicket;
+import com.solvd.taxi.model.*;
 import com.solvd.taxi.service.impl.*;
 import com.solvd.taxi.service.interfaces.*;
 import com.solvd.taxi.connection.ConnectionPool;
@@ -26,6 +21,7 @@ public class Main {
     private final RideService rideService;
     private final PaymentService paymentService;
     private final AnalyticsService analyticsService;
+    private final JsonService jsonService;
 
     public Main() {
         this.passengerService = new PassengerServiceImpl();
@@ -34,6 +30,7 @@ public class Main {
         this.paymentService = new PaymentServiceImpl();
         this.analyticsService = new AnalyticsServiceImpl();
         this.xmlService = new XmlServiceImpl();
+        this.jsonService = new JsonServiceImpl();
 
         logger.info("Services initialized successfully");
     }
@@ -207,6 +204,7 @@ public class Main {
             demonstratePaymentOperations();
             demonstrateAnalytics();
             demonstrateXmlOperations();
+            demonstrateJsonOperations();
         } catch (Exception e) {
             logger.error("Service demonstration failed: {}", e.getMessage(), e);
         }
@@ -392,6 +390,47 @@ public class Main {
         long resolvedTickets = supportTickets.stream().filter(SupportTicket::isResolved).count();
 
         logger.info("Support tickets: {} open, {} resolved", openTickets, resolvedTickets);
+    }
+
+    private void demonstrateJsonOperations() {
+        logger.info("--- JSON Service Methods ---");
+
+        try {
+            // Emergency contacts parsing
+            List<EmergencyContact> emergencyContacts =
+                    jsonService.parseEmergencyContacts("src/main/resources/emergency_contacts.json");
+            logger.info("Parsed {} emergency contacts", emergencyContacts.size());
+
+            // Parsing notifications
+            List<Notification> notifications =
+                    jsonService.parseNotifications("src/main/resources/notifications.json");
+            logger.info("Parsed {} notifications", notifications.size());
+
+            // Using the data
+            demonstrateJsonDataUsage(emergencyContacts, notifications);
+
+        } catch (Exception e) {
+            logger.error("JSON operations failed: {}", e.getMessage(), e);
+        }
+    }
+
+    private void demonstrateJsonDataUsage(List<EmergencyContact> emergencyContacts,
+                                          List<Notification> notifications) {
+        logger.info("--- Using Parsed JSON Data ---");
+
+        // Emergency contacts usage
+        if (!emergencyContacts.isEmpty()) {
+            EmergencyContact firstContact = emergencyContacts.get(0);
+            logger.info("First emergency contact: {} - {}",
+                    firstContact.getName(), firstContact.getPhone());
+        }
+
+        // Notifications statistics
+        long unreadNotifications = notifications.stream()
+                .filter(notification -> !notification.isRead())
+                .count();
+        logger.info("Notifications: {} total, {} unread",
+                notifications.size(), unreadNotifications);
     }
 
     private static void shutdown() {

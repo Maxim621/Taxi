@@ -1,0 +1,22 @@
+{
+  "notifications": [
+    {
+      "notificationId": 1,
+      "userId": 1,
+      "message": "Your ride has been completed",
+      "read": false
+    },
+    {
+      "notificationId": 2,
+      "userId": 2,
+      "message": "New promo code available",
+      "read": false
+    },
+    {
+      "notificationId": 3,
+      "userId": 3,
+      "message": "Your driver is arriving soon",
+      "read": true
+    }
+  ]
+}

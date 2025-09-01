@@ -1,0 +1,22 @@
+{
+  "emergencyContacts": [
+    {
+      "contactId": 1,
+      "passengerId": 1,
+      "name": "Mariya Petrenko",
+      "phone": "+380501112233"
+    },
+    {
+      "contactId": 2,
+      "passengerId": 2,
+      "name": "Oleksandr Kovalenko",
+      "phone": "+380671112233"
+    },
+    {
+      "contactId": 3,
+      "passengerId": 3,
+      "name": "Viktoria Shevchenko",
+      "phone": "+380631112233"
+    }
+  ]
+}
