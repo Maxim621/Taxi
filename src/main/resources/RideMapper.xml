@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.taxi.mybatis.mappers.RideMapper">
+
+    <resultMap id="rideResultMap" type="Ride">
+        <id property="rideId" column="ride_id"/>
+        <result property="passengerId" column="passenger_id"/>
+        <result property="driverId" column="driver_id"/>
+        <result property="startLocationId" column="start_location_id"/>
+        <result property="endLocationId" column="end_location_id"/>
+        <result property="priceId" column="price_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="status" column="status"/>
+        <result property="distance" column="distance"/>
+    </resultMap>
+
+    <select id="findById" resultMap="rideResultMap">
+        SELECT * FROM Rides WHERE ride_id = #{id}
+    </select>
+
+    <select id="findByPassengerId" resultMap="rideResultMap">
+        SELECT * FROM Rides WHERE passenger_id = #{passengerId}
+    </select>
+
+    <select id="findByDriverId" resultMap="rideResultMap">
+        SELECT * FROM Rides WHERE driver_id = #{driverId}
+    </select>
+
+    <select id="findByStatus" resultMap="rideResultMap">
+        SELECT * FROM Rides WHERE status = #{status}
+    </select>
+
+    <select id="findActive" resultMap="rideResultMap">
+        SELECT * FROM Rides WHERE status = 'ongoing'
+    </select>
+
+    <select id="findAll" resultMap="rideResultMap">
+        SELECT * FROM Rides
+    </select>
+
+    <select id="findByDateRange" resultMap="rideResultMap">
+        SELECT * FROM Rides
+        WHERE start_time BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*) FROM Rides
+    </select>
+
+    <select id="getCountByStatus" resultType="int">
+        SELECT COUNT(*) FROM Rides WHERE status = #{status}
+    </select>
+
+    <select id="calculateRidePrice" resultType="double">
+        SELECT p.base_fare + (p.per_km_rate * r.distance * p.surge_multiplier) as total_price
+        FROM Rides r
+        JOIN Pricing p ON r.price_id = p.price_id
+        WHERE r.ride_id = #{rideId}
+    </select>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="rideId">
+        INSERT INTO Rides (passenger_id, driver_id, start_location_id, end_location_id,
+        price_id, start_time, end_time, status, distance)
+        VALUES (#{passengerId}, #{driverId}, #{startLocationId}, #{endLocationId},
+        #{priceId}, #{startTime}, #{endTime}, #{status}, #{distance})
+    </insert>
+
+    <update id="update">
+        UPDATE Rides
+        SET passenger_id = #{passengerId}, driver_id = #{driverId},
+        start_location_id = #{startLocationId}, end_location_id = #{endLocationId},
+        price_id = #{priceId}, start_time = #{startTime}, end_time = #{endTime},
+        status = #{status}, distance = #{distance}
+        WHERE ride_id = #{rideId}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE Rides SET status = #{status} WHERE ride_id = #{rideId}
+    </update>
+
+    <update id="updateStartTime">
+        UPDATE Rides SET start_time = #{startTime} WHERE ride_id = #{rideId}
+    </update>
+
+    <update id="updateEndTime">
+        UPDATE Rides SET end_time = #{endTime} WHERE ride_id = #{rideId}
+    </update>
+
+    <update id="cancel">
+        UPDATE Rides SET status = 'cancelled' WHERE ride_id = #{rideId}
+    </update>
+
+</mapper>

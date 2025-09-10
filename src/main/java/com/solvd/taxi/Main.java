@@ -2,6 +2,7 @@ package com.solvd.taxi;
 
 import com.solvd.taxi.model.*;
 import com.solvd.taxi.service.impl.*;
+import com.solvd.taxi.service.mybatisimpl.*;
 import com.solvd.taxi.service.interfaces.*;
 import com.solvd.taxi.connection.ConnectionPool;
 
@@ -24,11 +25,17 @@ public class Main {
     private final JsonService jsonService;
 
     public Main() {
-        this.passengerService = new PassengerServiceImpl();
-        this.driverService = new DriverServiceImpl();
-        this.rideService = new RideServiceImpl();
-        this.paymentService = new PaymentServiceImpl();
-        this.analyticsService = new AnalyticsServiceImpl();
+        //this.passengerService = new PassengerServiceImpl();
+        //this.driverService = new DriverServiceImpl();
+        //this.rideService = new RideServiceImpl();
+        //this.paymentService = new PaymentServiceImpl();
+        //this.analyticsService = new AnalyticsServiceImpl();
+        this.passengerService = new PassengerServiceImplMyBatis();
+        this.driverService = new DriverServiceImplMyBatis();
+        this.rideService = new RideServiceImplMyBatis();
+        this.paymentService = new PaymentServiceImplMyBatis();
+        this.analyticsService = new AnalyticsServiceImplMyBatis();
+
         this.xmlService = new XmlServiceImpl();
         this.jsonService = new JsonServiceImpl();
 

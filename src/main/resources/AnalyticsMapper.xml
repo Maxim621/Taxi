@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.taxi.mybatis.mappers.AnalyticsMapper">
+
+    <select id="getRidesStatistics" resultType="map">
+        SELECT
+        COUNT(*) as total,
+        COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed,
+        COUNT(CASE WHEN status = 'ongoing' THEN 1 END) as ongoing,
+        COUNT(CASE WHEN status = 'cancelled' THEN 1 END) as cancelled,
+        COUNT(CASE WHEN DATE(start_time) = CURDATE() THEN 1 END) as today
+        FROM Rides
+    </select>
+
+    <select id="getRevenueStatistics" resultType="map">
+        SELECT
+        COALESCE(SUM(amount), 0) as total,
+        COALESCE(SUM(CASE WHEN DATE(r.start_time) = CURDATE() THEN amount END), 0) as today,
+        COALESCE(AVG(amount), 0) as average
+        FROM Payments p
+        JOIN Rides r ON p.ride_id = r.ride_id
+        WHERE r.status = 'completed'
+    </select>
+
+    <select id="getDriverPerformanceStats" resultType="map">
+        SELECT
+        COUNT(*) as total_drivers,
+        AVG(dr.rating) as avg_rating,
+        SUM(r.distance) as total_distance
+        FROM Drivers d
+        LEFT JOIN Rides r ON d.driver_id = r.driver_id
+        LEFT JOIN DriverRatings dr ON d.driver_id = dr.driver_id
+    </select>
+
+    <select id="getPassengerActivityStats" resultType="map">
+        SELECT
+        p.passenger_id,
+        p.name as passenger_name,
+        COUNT(r.ride_id) as total_rides,
+        COALESCE(SUM(r.distance), 0) as total_distance,
+        COALESCE(SUM(py.amount), 0) as total_spent,
+        MAX(r.start_time) as last_ride_date
+        FROM Passengers p
+        LEFT JOIN Rides r ON p.passenger_id = r.passenger_id
+        LEFT JOIN Payments py ON r.ride_id = py.ride_id
+        GROUP BY p.passenger_id, p.name
+        ORDER BY total_rides DESC
+    </select>
+
+    <select id="getPopularLocations" resultType="map">
+        SELECT
+        'top_locations' as `key`,
+        COUNT(*) as `value`
+        FROM (
+        SELECT l.address
+        FROM Locations l
+        LEFT JOIN Rides r ON l.location_id = r.start_location_id OR l.location_id = r.end_location_id
+        GROUP BY l.location_id, l.address
+        ORDER BY COUNT(r.start_location_id) + COUNT(r.end_location_id) DESC
+        LIMIT 10
+        ) AS top_locs
+    </select>
+
+    <select id="getRidesByHourOfDay" resultType="map">
+        SELECT
+        HOUR(start_time) as hour_of_day,
+        COUNT(*) as ride_count
+        FROM Rides
+        WHERE start_time IS NOT NULL
+        GROUP BY HOUR(start_time)
+        ORDER BY hour_of_day
+    </select>
+
+    <select id="getRidesByDayOfWeek" resultType="map">
+        SELECT
+        DAYNAME(start_time) as day_of_week,
+        COUNT(*) as ride_count
+        FROM Rides
+        WHERE start_time IS NOT NULL
+        GROUP BY DAYNAME(start_time), DAYOFWEEK(start_time)
+        ORDER BY DAYOFWEEK(start_time)
+    </select>
+
+    <select id="getAverageRideDistance" resultType="double">
+        SELECT COALESCE(AVG(distance), 0) FROM Rides WHERE status = 'completed'
+    </select>
+
+    <select id="getAverageRideDuration" resultType="double">
+        SELECT COALESCE(AVG(TIMESTAMPDIFF(MINUTE, start_time, end_time)), 0)
+        FROM Rides
+        WHERE status = 'completed' AND start_time IS NOT NULL AND end_time IS NOT NULL
+    </select>
+
+    <select id="getPaymentMethodsDistribution" resultType="map">
+        SELECT
+        payment_method,
+        COUNT(*) as count
+        FROM Payments
+        GROUP BY payment_method
+    </select>
+
+    <select id="getRatingDistribution" resultType="map">
+        SELECT
+        rating,
+        COUNT(*) as count
+        FROM RideReviews
+        GROUP BY rating
+        ORDER BY rating
+    </select>
+
+    <select id="getCarTypeUsageStats" resultType="map">
+        SELECT
+        ct.name as car_type,
+        COUNT(r.ride_id) as usage_count
+        FROM CarTypes ct
+        LEFT JOIN Cars c ON ct.type_id = c.type_id
+        LEFT JOIN Rides r ON c.driver_id = r.driver_id
+        GROUP BY ct.type_id, ct.name
+    </select>
+
+    <select id="getRevenueByLocation" resultType="map">
+        SELECT
+        l.address as location,
+        COALESCE(SUM(p.amount), 0) as total_revenue
+        FROM Locations l
+        LEFT JOIN Rides r ON l.location_id = r.start_location_id
+        LEFT JOIN Payments p ON r.ride_id = p.ride_id
+        WHERE r.status = 'completed'
+        GROUP BY l.location_id, l.address
+        ORDER BY total_revenue DESC
+    </select>
+
+    <select id="getActiveUsersCount" resultType="int">
+        SELECT COUNT(DISTINCT passenger_id)
+        FROM Rides
+        WHERE DATE(start_time) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    </select>
+
+    <select id="getNewUsersThisMonth" resultType="int">
+        SELECT COUNT(*)
+        FROM Passengers
+        WHERE MONTH(registration_date) = MONTH(CURDATE())
+        AND YEAR(registration_date) = YEAR(CURDATE())
+    </select>
+
+</mapper>

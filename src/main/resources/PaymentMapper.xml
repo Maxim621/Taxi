@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.taxi.mybatis.mappers.PaymentMapper">
+
+    <resultMap id="paymentResultMap" type="Payment">
+        <id property="paymentId" column="payment_id"/>
+        <result property="rideId" column="ride_id"/>
+        <result property="amount" column="amount"/>
+        <result property="paymentMethod" column="payment_method"/>
+    </resultMap>
+
+    <select id="findById" resultMap="paymentResultMap">
+        SELECT * FROM Payments WHERE payment_id = #{id}
+    </select>
+
+    <select id="findByRideId" resultMap="paymentResultMap">
+        SELECT * FROM Payments WHERE ride_id = #{rideId}
+    </select>
+
+    <select id="findByPaymentMethod" resultMap="paymentResultMap">
+        SELECT * FROM Payments WHERE payment_method = #{paymentMethod}
+    </select>
+
+    <select id="findByAmountRange" resultMap="paymentResultMap">
+        SELECT * FROM Payments WHERE amount BETWEEN #{minAmount} AND #{maxAmount}
+    </select>
+
+    <select id="findByDateRange" resultMap="paymentResultMap">
+        SELECT p.* FROM Payments p
+        JOIN Rides r ON p.ride_id = r.ride_id
+        WHERE r.start_time BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <select id="findAll" resultMap="paymentResultMap">
+        SELECT * FROM Payments
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*) FROM Payments
+    </select>
+
+    <select id="getTotalRevenue" resultType="double">
+        SELECT COALESCE(SUM(amount), 0) FROM Payments
+    </select>
+
+    <select id="getRevenueByDateRange" resultType="double">
+        SELECT COALESCE(SUM(p.amount), 0)
+        FROM Payments p
+        JOIN Rides r ON p.ride_id = r.ride_id
+        WHERE r.start_time BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="paymentId">
+        INSERT INTO Payments (ride_id, amount, payment_method)
+        VALUES (#{rideId}, #{amount}, #{paymentMethod})
+    </insert>
+
+    <update id="update">
+        UPDATE Payments
+        SET ride_id = #{rideId}, amount = #{amount}, payment_method = #{paymentMethod}
+        WHERE payment_id = #{paymentId}
+    </update>
+
+    <update id="refund">
+        UPDATE Payments SET is_refunded = true WHERE payment_id = #{paymentId}
+    </update>
+
+    <update id="validate">
+        UPDATE Payments SET is_validated = true WHERE payment_id = #{paymentId}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM Payments WHERE payment_id = #{id}
+    </delete>
+
+</mapper>

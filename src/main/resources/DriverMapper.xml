@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.taxi.mybatis.mappers.DriverMapper">
+
+    <resultMap id="driverResultMap" type="Driver">
+        <id property="driverId" column="driver_id"/>
+        <result property="name" column="name"/>
+        <result property="licenseNumber" column="license_number"/>
+        <result property="rating" column="rating"/>
+    </resultMap>
+
+    <select id="findById" resultMap="driverResultMap">
+        SELECT * FROM Drivers WHERE driver_id = #{id}
+    </select>
+
+    <select id="findByLicense" resultMap="driverResultMap">
+        SELECT * FROM Drivers WHERE license_number = #{licenseNumber}
+    </select>
+
+    <select id="findByNamePattern" resultMap="driverResultMap">
+        SELECT * FROM Drivers WHERE name LIKE CONCAT('%', #{name}, '%')
+    </select>
+
+    <select id="findAll" resultMap="driverResultMap">
+        SELECT * FROM Drivers
+    </select>
+
+    <select id="findByRating" resultMap="driverResultMap">
+        SELECT * FROM Drivers WHERE rating >= #{minRating}
+    </select>
+
+    <select id="findAvailable" resultMap="driverResultMap">
+        SELECT d.* FROM Drivers d
+        LEFT JOIN Rides r ON d.driver_id = r.driver_id AND r.status = 'ongoing'
+        WHERE r.ride_id IS NULL
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*) FROM Drivers
+    </select>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="driverId">
+        INSERT INTO Drivers (name, license_number, rating)
+        VALUES (#{name}, #{licenseNumber}, #{rating})
+    </insert>
+
+    <update id="update">
+        UPDATE Drivers
+        SET name = #{name}, license_number = #{licenseNumber}, rating = #{rating}
+        WHERE driver_id = #{driverId}
+    </update>
+
+    <update id="updateRating">
+        UPDATE Drivers SET rating = #{rating} WHERE driver_id = #{driverId}
+    </update>
+
+    <update id="assignCar">
+        UPDATE Cars SET driver_id = #{driverId} WHERE car_id = #{carId}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM Drivers WHERE driver_id = #{id}
+    </delete>
+
+</mapper>

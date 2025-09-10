@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource="database.properties"/>
+
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <setting name="cacheEnabled" value="true"/>
+        <setting name="jdbcTypeForNull" value="NULL"/>
+        <setting name="logImpl" value="LOG4J2"/>
+    </settings>
+
+    <typeAliases>
+        <!-- Main Models -->
+        <typeAlias type="com.solvd.taxi.model.Passenger" alias="Passenger"/>
+        <typeAlias type="com.solvd.taxi.model.Driver" alias="Driver"/>
+        <typeAlias type="com.solvd.taxi.model.Ride" alias="Ride"/>
+        <typeAlias type="com.solvd.taxi.model.Payment" alias="Payment"/>
+        <typeAlias type="com.solvd.taxi.model.Car" alias="Car"/>
+        <typeAlias type="com.solvd.taxi.model.Location" alias="Location"/>
+        <typeAlias type="com.solvd.taxi.model.Pricing" alias="Pricing"/>
+        <typeAlias type="com.solvd.taxi.model.Review" alias="Review"/>
+        <typeAlias type="com.solvd.taxi.model.PromoCode" alias="PromoCode"/>
+        <typeAlias type="com.solvd.taxi.model.SupportTicket" alias="SupportTicket"/>
+
+        <!-- JSON Models -->
+        <typeAlias type="com.solvd.taxi.model.EmergencyContact" alias="EmergencyContact"/>
+        <typeAlias type="com.solvd.taxi.model.Notification" alias="Notification"/>
+
+        <!-- Java Types -->
+        <typeAlias type="java.util.HashMap" alias="HashMap"/>
+        <typeAlias type="java.util.ArrayList" alias="ArrayList"/>
+        <typeAlias type="java.time.LocalDateTime" alias="LocalDateTime"/>
+        <typeAlias type="java.time.LocalDate" alias="LocalDate"/>
+    </typeAliases>
+
+    <typeHandlers>
+        <!-- Type handlers for Java 8 Date/Time API -->
+        <typeHandler handler="org.apache.ibatis.type.LocalDateTimeTypeHandler"
+                     javaType="java.time.LocalDateTime"/>
+        <typeHandler handler="org.apache.ibatis.type.LocalDateTypeHandler"
+                     javaType="java.time.LocalDate"/>
+    </typeHandlers>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="${db.url}"/>
+                <property name="username" value="${db.username}"/>
+                <property name="password" value="${db.password}"/>
+
+                <!-- Connection pool settings from your properties -->
+                <property name="poolMaximumActiveConnections" value="${db.pool.size}"/>
+                <property name="poolMaximumIdleConnections" value="5"/>
+                <property name="poolMaximumCheckoutTime" value="20000"/>
+                <property name="poolTimeToWait" value="20000"/>
+                <property name="poolPingEnabled" value="true"/>
+                <property name="poolPingQuery" value="SELECT 1"/>
+                <property name="poolPingConnectionsNotUsedFor" value="3600000"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <!-- Main Data Mappers -->
+        <mapper resource="PassengerMapper.xml"/>
+        <mapper resource="DriverMapper.xml"/>
+        <mapper resource="RideMapper.xml"/>
+        <mapper resource="PaymentMapper.xml"/>
+        <mapper resource="AnalyticsMapper.xml"/>
+    </mappers>
+</configuration>

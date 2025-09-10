@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.solvd.taxi.mybatis.mappers.PassengerMapper">
+
+    <resultMap id="passengerResultMap" type="Passenger">
+        <id property="passengerId" column="passenger_id"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="registrationDate" column="registration_date"/>
+    </resultMap>
+
+    <select id="findById" resultMap="passengerResultMap">
+        SELECT * FROM Passengers WHERE passenger_id = #{id}
+    </select>
+
+    <select id="findByEmail" resultMap="passengerResultMap">
+        SELECT * FROM Passengers WHERE email = #{email}
+    </select>
+
+    <select id="findByPhone" resultMap="passengerResultMap">
+        SELECT * FROM Passengers WHERE phone = #{phone}
+    </select>
+
+    <select id="findByNamePattern" resultMap="passengerResultMap">
+        SELECT * FROM Passengers WHERE name LIKE CONCAT('%', #{name}, '%')
+    </select>
+
+    <select id="findAll" resultMap="passengerResultMap">
+        SELECT * FROM Passengers
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*) FROM Passengers
+    </select>
+
+    <select id="getActiveCount" resultType="int">
+        SELECT COUNT(DISTINCT passenger_id)
+        FROM Rides
+        WHERE DATE(start_time) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    </select>
+
+    <insert id="create" useGeneratedKeys="true" keyProperty="passengerId">
+        INSERT INTO Passengers (name, phone, email, registration_date)
+        VALUES (#{name}, #{phone}, #{email}, #{registrationDate})
+    </insert>
+
+    <update id="update">
+        UPDATE Passengers
+        SET name = #{name}, phone = #{phone}, email = #{email}
+        WHERE passenger_id = #{passengerId}
+    </update>
+
+    <update id="deactivate">
+        UPDATE Passengers SET is_active = false WHERE passenger_id = #{passengerId}
+    </update>
+
+    <update id="activate">
+        UPDATE Passengers SET is_active = true WHERE passenger_id = #{passengerId}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM Passengers WHERE passenger_id = #{id}
+    </delete>
+
+</mapper>
